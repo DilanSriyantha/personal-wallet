@@ -1,6 +1,5 @@
 package com.dilansriyantha.backend.Authentication.DTOs;
 
-import com.dilansriyantha.backend.Authentication.Models.User;
 import com.dilansriyantha.backend.Enums.Role;
 
 import lombok.AllArgsConstructor;
