@@ -35,7 +35,15 @@ public class LogBookDAO implements DAO<LogBook> {
     
     @Override
     public List<LogBook> getAll() {
-        var sql = "SELECT * FROM logbook";
+        var sql = """
+            SELECT 
+                l.id AS id,
+                l.caption AS caption,
+                l.description AS description,
+                l.updated_at AS updated_at,
+                l.created_at AS created_at
+            FROM logbook
+        """;
 
         var logBooks = jdbcTemplate.query(sql, rowMapper);
 
@@ -46,7 +54,15 @@ public class LogBookDAO implements DAO<LogBook> {
     public Page<LogBook> getPage(int page, int pageSize) {
         var offset = page*pageSize;
 
-        var sql = "SELECT * FROM logbook ORDER BY id ASC LIMIT ? OFFSET ?";
+        var sql = """
+            SELECT
+                l.id AS id,
+                l.caption AS caption,
+                l.description AS description,
+                l.updated_at AS updated_at,
+                l.created_at AS created_at
+            FROM logbook ORDER BY id ASC LIMIT ? OFFSET ?
+        """;
         var logBooks = jdbcTemplate.query(sql, rowMapper, pageSize, offset);
 
         var countSql = "SELECT COUNT(*) FROM logbook";
@@ -59,7 +75,13 @@ public class LogBookDAO implements DAO<LogBook> {
         var offset = page*pageSize;
 
         var sql = """
-                SELECT * FROM user_logbook ul 
+                SELECT 
+                    l.id AS id,
+                    l.caption AS caption,
+                    l.description AS description,
+                    l.updated_at AS updated_at,
+                    l.created_at AS created_at
+                FROM user_logbook ul 
                 JOIN user u ON ul.user_id = u.id
                 JOIN logbook l ON ul.logbook_id = l.id
                 WHERE u.id=?
@@ -71,7 +93,7 @@ public class LogBookDAO implements DAO<LogBook> {
                 SELECT COUNT(*) FROM user_logbook ul 
                 JOIN user u ON ul.user_id = u.id
                 JOIN logbook l ON ul.logbook_id = l.id
-                ORDER BY l.id ASC LIMIT ? OFFSET ?
+                ORDER BY l.id ASC
                 """;
         var total = jdbcTemplate.queryForObject(countSql, Integer.class);
 
@@ -82,11 +104,17 @@ public class LogBookDAO implements DAO<LogBook> {
     public Optional<LogBook> get(int id) {
         var sql = """
                 SELECT * FROM (
-                    SELECT * FROM user_logbook ul
+                    SELECT 
+                        l.id AS id,
+                        l.caption AS caption,
+                        l.description AS description,
+                        l.updated_at AS updated_at,
+                        l.created_at AS created_at
+                    FROM user_logbook ul
                     JOIN user u ON ul.user_id = u.id
                     JOIN logbook l on ul.logbook_id = l.id
                     ORDER BY ul.id ASC
-                ) t WHERE t.logbook_id=?
+                ) t WHERE t.id=?
                 """;
         var logBook = jdbcTemplate.queryForObject(sql, rowMapper, id);
 
